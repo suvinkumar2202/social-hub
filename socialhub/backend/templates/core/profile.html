@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }} - SocialHub{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-cover">
+        {% if profile_user.profile.cover_image %}
+        <img src="{{ profile_user.profile.cover_image.url }}" alt="Cover" class="cover-image">
+        {% else %}
+        <div class="cover-image cover-placeholder"></div>
+        {% endif %}
+    </div>
+
+    <div class="profile-header classic">
+        <div class="profile-info-row">
+            <div class="profile-avatar-wrap">
+                {% if profile_user.profile.avatar %}
+                <img src="{{ profile_user.profile.avatar.url }}" alt="" class="avatar avatar-xl">
+                {% else %}
+                <div class="avatar avatar-xl">{{ profile_user.username|first|upper }}</div>
+                {% endif %}
+            </div>
+            <div class="profile-meta">
+                <div class="profile-name-row">
+                    <h1 class="profile-username">{{ profile_user.username }}</h1>
+                    {% if profile_user == user %}
+                    <a href="{% url 'profile_edit' %}" class="btn btn-outline btn-sm">Edit Profile</a>
+                    {% elif user.is_authenticated %}
+                    <button class="btn follow-btn {% if is_following %}following{% endif %}"
+                            data-username="{{ profile_user.username }}"
+                            data-url="{% url 'follow_toggle' username=profile_user.username %}">
+                        {% if is_following %}Following{% else %}Follow{% endif %}
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="profile-stats">
+                    <span class="stat"><strong>{{ profile_user.profile.post_count }}</strong> posts</span>
+                    <span class="stat"><strong>{{ profile_user.profile.follower_count }}</strong> followers</span>
+                    <span class="stat"><strong>{{ profile_user.profile.following_count }}</strong> following</span>
+                </div>
+                <div class="profile-details">
+                    {% if profile_user.first_name or profile_user.last_name %}
+                    <span class="profile-fullname">{{ profile_user.get_full_name }}</span>
+                    {% endif %}
+                    {% if profile_user.profile.bio %}
+                    <p class="profile-bio">{{ profile_user.profile.bio }}</p>
+                    {% endif %}
+                    <div class="profile-extra-info">
+                        {% if profile_user.profile.location %}
+                        <span class="profile-info-item">&#9906; {{ profile_user.profile.location }}</span>
+                        {% endif %}
+                        {% if profile_user.profile.website %}
+                        <a href="{{ profile_user.profile.website }}" class="profile-info-item" target="_blank" rel="noopener">&#9741; {{ profile_user.profile.website }}</a>
+                        {% endif %}
+                        <span class="profile-info-item">&#9733; Joined {{ profile_user.date_joined|date:"M Y" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-tabs">
+        <a class="profile-tab active" data-tab="posts">Posts</a>
+        <a class="profile-tab" data-tab="about">About</a>
+    </div>
+
+    <div class="profile-tab-content active" id="tab-posts">
+        {% for post in posts %}
+        <article class="post-card" data-post-id="{{ post.id }}">
+            <div class="post-header">
+                <div class="post-author-details">
+                    <span class="post-time">{{ post.created_at|timesince }} ago</span>
+                </div>
+                {% if post.author == user %}
+                <form method="post" action="{% url 'post_delete' pk=post.id %}" class="delete-post-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete" title="Delete">&times;</button>
+                </form>
+                {% endif %}
+            </div>
+            <div class="post-content">{{ post.content }}</div>
+            <div class="post-actions">
+                <button class="action-btn like-btn {% if user in post.likes.all %}liked{% endif %}"
+                        data-post-id="{{ post.id }}"
+                        data-url="{% url 'post_like' pk=post.id %}">
+                    <span class="action-icon">{% if user in post.likes.all %}&#9829;{% else %}&#9825;{% endif %}</span>
+                    <span class="like-count">{{ post.like_count }}</span>
+                </button>
+                <button class="action-btn comment-toggle-btn" data-post-id="{{ post.id }}">
+                    <span class="action-icon">&#128172;</span>
+                    <span class="comment-count">{{ post.comment_count }}</span>
+                </button>
+            </div>
+
+            <div class="comments-section" id="comments-{{ post.id }}" style="display:none;">
+                <div class="comments-list">
+                    {% for comment in post.comments.all %}
+                    <div class="comment-item" data-comment-id="{{ comment.id }}">
+                        <div class="comment-content">
+                            <a href="{% url 'profile' username=comment.author.username %}" class="comment-author">{{ comment.author.username }}</a>
+                            <span class="comment-text">{{ comment.content }}</span>
+                        </div>
+                        {% if comment.author == user %}
+                        <button class="btn-delete-sm delete-comment-btn" data-url="{% url 'comment_delete' pk=comment.id %}" title="Delete">&times;</button>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <form method="post" action="{% url 'add_comment' pk=post.id %}" class="comment-form" data-post-id="{{ post.id }}">
+                    {% csrf_token %}
+                    <input type="text" name="content" placeholder="Write a comment..." class="comment-input" required>
+                    <button type="submit" class="btn btn-primary btn-xs">Post</button>
+                </form>
+            </div>
+        </article>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">&#9830;</div>
+            <p>No posts yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="profile-tab-content" id="tab-about" style="display:none;">
+        <div class="about-card">
+            <h3 class="about-title">About {{ profile_user.username }}</h3>
+            <div class="about-grid">
+                {% if profile_user.first_name or profile_user.last_name %}
+                <div class="about-item">
+                    <span class="about-label">Full Name</span>
+                    <span class="about-value">{{ profile_user.get_full_name }}</span>
+                </div>
+                {% endif %}
+                <div class="about-item">
+                    <span class="about-label">Username</span>
+                    <span class="about-value">@{{ profile_user.username }}</span>
+                </div>
+                <div class="about-item">
+                    <span class="about-label">Email</span>
+                    <span class="about-value">{{ profile_user.email }}</span>
+                </div>
+                {% if profile_user.profile.location %}
+                <div class="about-item">
+                    <span class="about-label">Location</span>
+                    <span class="about-value">{{ profile_user.profile.location }}</span>
+                </div>
+                {% endif %}
+                {% if profile_user.profile.website %}
+                <div class="about-item">
+                    <span class="about-label">Website</span>
+                    <a href="{{ profile_user.profile.website }}" class="about-value" target="_blank">{{ profile_user.profile.website }}</a>
+                </div>
+                {% endif %}
+                <div class="about-item">
+                    <span class="about-label">Joined</span>
+                    <span class="about-value">{{ profile_user.date_joined|date:"F j, Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.profile-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.profile-tab-content').forEach(c => { c.style.display = 'none'; c.classList.remove('active'); });
+        this.classList.add('active');
+        const target = document.getElementById('tab-' + this.dataset.tab);
+        if (target) { target.style.display = 'block'; target.classList.add('active'); }
+    });
+});
+</script>
+{% endblock %}

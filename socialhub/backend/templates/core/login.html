@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - SocialHub{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="auth-title"><span class="brand-icon">&#9830;</span> SocialHub</h1>
+        <p class="auth-subtitle">Sign in to your account</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <input type="{{ field.field.widget.input_type }}"
+                       name="{{ field.html_name }}"
+                       id="{{ field.id_for_label }}"
+                       class="form-input"
+                       {% if field.value %}value="{{ field.value }}"{% endif %}
+                       required>
+                {% for error in field.errors %}
+                <span class="form-error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </form>
+
+        <p class="auth-footer">
+            Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

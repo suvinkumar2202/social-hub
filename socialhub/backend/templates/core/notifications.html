@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - SocialHub{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <div class="page-title-row">
+        <h2 class="page-title">Notifications</h2>
+        {% if unread_count > 0 %}
+        <form method="post" action="{% url 'mark_notifications_read' %}" id="markReadForm">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline btn-sm">Mark all read</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="notifications-list">
+        {% for notif in notifications %}
+        <div class="notif-item {% if not notif.is_read %}unread{% endif %}" data-notif-id="{{ notif.id }}">
+            <div class="notif-icon">
+                {% if notif.notification_type == 'like' %}&#9829;
+                {% elif notif.notification_type == 'comment' %}&#128172;
+                {% elif notif.notification_type == 'follow' %}&#9733;
+                {% endif %}
+            </div>
+            <div class="notif-content">
+                <a href="{% url 'profile' username=notif.sender.username %}" class="notif-sender">{{ notif.sender.username }}</a>
+                {% if notif.notification_type == 'like' %}
+                liked your post
+                {% elif notif.notification_type == 'comment' %}
+                commented on your post
+                {% elif notif.notification_type == 'follow' %}
+                started following you
+                {% endif %}
+                <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+            </div>
+            {% if notif.post %}
+            <a href="{% url 'feed' %}" class="notif-post-link">View</a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">&#9888;</div>
+            <h3>No notifications yet</h3>
+            <p>When someone interacts with your posts or follows you, you'll see it here.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.getElementById('markReadForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch(this.action, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': this.querySelector('[name=csrfmiddlewaretoken]').value }
+    }).then(() => {
+        document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+        this.remove();
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

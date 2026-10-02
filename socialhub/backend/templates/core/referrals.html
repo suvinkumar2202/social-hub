@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Invite Friends - SocialHub{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <h2 class="page-title">Invite Friends</h2>
+
+    <div class="referral-hero">
+        <div class="referral-hero-icon">&#10024;</div>
+        <h3 class="referral-hero-title">Grow Your Network</h3>
+        <p class="referral-hero-desc">Share your personal referral link with friends. When they join, you'll see them in your referral list!</p>
+    </div>
+
+    <div class="referral-section">
+        <h3 class="settings-section-title">Your Referral Link</h3>
+        <div class="referral-link-box">
+            <input type="text" value="{{ referral_link }}" id="referralLink" class="form-input" readonly>
+            <button class="btn btn-primary btn-sm" onclick="copyReferralLink()">Copy</button>
+        </div>
+        <span class="referral-code-label">Your code: <strong>{{ referral_code }}</strong></span>
+    </div>
+
+    <div class="referral-section">
+        <h3 class="settings-section-title">Share on Social Media</h3>
+        <div class="share-buttons">
+            <a href="https://twitter.com/intent/tweet?text=Join%20me%20on%20SocialHub!&url={{ referral_link }}" target="_blank" class="share-btn share-twitter">
+                Twitter / X
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ referral_link }}" target="_blank" class="share-btn share-facebook">
+                Facebook
+            </a>
+            <a href="https://wa.me/?text=Join%20me%20on%20SocialHub!%20{{ referral_link }}" target="_blank" class="share-btn share-whatsapp">
+                WhatsApp
+            </a>
+            <a href="mailto:?subject=Join%20me%20on%20SocialHub&body=Hey!%20Check%20out%20SocialHub%20and%20join%20me%3A%20{{ referral_link }}" class="share-btn share-email">
+                Email
+            </a>
+        </div>
+    </div>
+
+    <div class="referral-section">
+        <h3 class="settings-section-title">Stats</h3>
+        <div class="referral-stats">
+            <div class="referral-stat-card">
+                <span class="referral-stat-number">{{ total_referrals }}</span>
+                <span class="referral-stat-label">Referrals</span>
+            </div>
+            <div class="referral-stat-card">
+                <span class="referral-stat-number">{{ recent_clicks.count }}</span>
+                <span class="referral-stat-label">Link Clicks</span>
+            </div>
+        </div>
+    </div>
+
+    {% if recent_clicks %}
+    <div class="referral-section">
+        <h3 class="settings-section-title">Recent Clicks</h3>
+        <div class="clicks-list">
+            {% for click in recent_clicks %}
+            <div class="click-item">
+                <span class="click-ip">{{ click.ip_address|default:"Unknown" }}</span>
+                <span class="click-time">{{ click.created_at|timesince }} ago</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+function copyReferralLink() {
+    const input = document.getElementById('referralLink');
+    input.select();
+    document.execCommand('copy');
+    const btn = input.nextElementSibling;
+    btn.textContent = 'Copied!';
+    btn.classList.add('btn-success');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('btn-success'); }, 2000);
+}
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Users - SocialHub{% endblock %}
+
+{% block content %}
+<div class="feed-container">
+    <div class="feed-main">
+        <h2 class="page-title">&#9787; All Users</h2>
+        <div class="user-grid user-grid-wide">
+            {% for u in users %}
+            <div class="user-card">
+                <a href="{% url 'profile' username=u.username %}" class="user-card-link">
+                    {% if u.profile.avatar %}
+                    <img src="{{ u.profile.avatar.url }}" alt="" class="avatar avatar-md">
+                    {% else %}
+                    <div class="avatar avatar-md">{{ u.username|first|upper }}</div>
+                    {% endif %}
+                    <span class="user-card-name">{{ u.username }}</span>
+                    <span class="user-card-posts">{{ u.profile.post_count }} posts &middot; {{ u.profile.follower_count }} followers</span>
+                </a>
+                <button class="btn btn-outline btn-sm follow-btn"
+                        data-username="{{ u.username }}"
+                        data-url="{% url 'follow_toggle' username=u.username %}">
+                    Follow
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

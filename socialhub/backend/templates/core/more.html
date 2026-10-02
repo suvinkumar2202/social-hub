@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}More - SocialHub{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <h2 class="page-title">More</h2>
+
+    <div class="more-grid">
+        <a href="{% url 'referrals' %}" class="more-card">
+            <div class="more-icon">&#10024;</div>
+            <div class="more-info">
+                <h3 class="more-title">Invite Friends</h3>
+                <p class="more-desc">Share your referral link and grow your network</p>
+            </div>
+            <span class="more-arrow">&#8250;</span>
+        </a>
+
+        <a href="{% url 'account_settings' %}" class="more-card">
+            <div class="more-icon">&#9881;</div>
+            <div class="more-info">
+                <h3 class="more-title">Account Settings</h3>
+                <p class="more-desc">Manage your account preferences and privacy</p>
+            </div>
+            <span class="more-arrow">&#8250;</span>
+        </a>
+
+        <a href="{% url 'profile_edit' %}" class="more-card">
+            <div class="more-icon">&#9998;</div>
+            <div class="more-info">
+                <h3 class="more-title">Edit Profile</h3>
+                <p class="more-desc">Update your photo, bio, and personal details</p>
+            </div>
+            <span class="more-arrow">&#8250;</span>
+        </a>
+
+        <a href="{% url 'notifications' %}" class="more-card">
+            <div class="more-icon">&#9888;</div>
+            <div class="more-info">
+                <h3 class="more-title">Notifications</h3>
+                <p class="more-desc">View your recent activity and alerts</p>
+            </div>
+            <span class="more-arrow">&#8250;</span>
+        </a>
+
+        <a href="{% url 'explore' %}" class="more-card">
+            <div class="more-icon">&#9733;</div>
+            <div class="more-info">
+                <h3 class="more-title">Explore</h3>
+                <p class="more-desc">Discover new people and trending posts</p>
+            </div>
+            <span class="more-arrow">&#8250;</span>
+        </a>
+
+        <a href="{% url 'user_list' %}" class="more-card">
+            <div class="more-icon">&#9787;</div>
+            <div class="more-info">
+                <h3 class="more-title">Browse Users</h3>
+                <p class="more-desc">Find and follow other members</p>
+            </div>
+            <span class="more-arrow">&#8250;</span>
+        </a>
+
+        <div class="more-card more-card-info">
+            <div class="more-icon">&#9679;</div>
+            <div class="more-info">
+                <h3 class="more-title">About SocialHub</h3>
+                <p class="more-desc">Version 1.0 &middot; A classic social experience</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

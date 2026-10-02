@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Settings - SocialHub{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <h2 class="page-title">Account Settings</h2>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">Account</h3>
+        <div class="settings-list">
+            <a href="{% url 'profile_edit' %}" class="settings-item">
+                <div class="settings-item-info">
+                    <span class="settings-item-title">Edit Profile</span>
+                    <span class="settings-item-desc">Update your name, bio, photo, and details</span>
+                </div>
+                <span class="more-arrow">&#8250;</span>
+            </a>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <span class="settings-item-title">Username</span>
+                    <span class="settings-item-desc">@{{ user.username }}</span>
+                </div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <span class="settings-item-title">Email</span>
+                    <span class="settings-item-desc">{{ user.email }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">Privacy & Security</h3>
+        <div class="settings-list">
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <span class="settings-item-title">Account Visibility</span>
+                    <span class="settings-item-desc">Your profile is public</span>
+                </div>
+                <span class="settings-badge">Public</span>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <span class="settings-item-title">Posts Visibility</span>
+                    <span class="settings-item-desc">All users can see your posts</span>
+                </div>
+                <span class="settings-badge">Public</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">Referrals</h3>
+        <div class="settings-list">
+            <a href="{% url 'referrals' %}" class="settings-item">
+                <div class="settings-item-info">
+                    <span class="settings-item-title">Invite Friends</span>
+                    <span class="settings-item-desc">Share your referral link to invite others</span>
+                </div>
+                <span class="more-arrow">&#8250;</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">Danger Zone</h3>
+        <div class="settings-list">
+            <div class="settings-item settings-item-danger">
+                <div class="settings-item-info">
+                    <span class="settings-item-title">Logout</span>
+                    <span class="settings-item-desc">Sign out of your account</span>
+                </div>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
